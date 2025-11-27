@@ -1,4 +1,4 @@
-# Omona
+# Magambrowser
 App for android phone.
 
 app/
