@@ -16,9 +16,16 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '17'
+        java-version: '11'
         
-    - name: Build with Gradle
+    - name: Install Gradle 6.7
       run: |
-        # Közvetlen gradle használata wrapper nélkül
+        # Gradle 6.7 letöltése és telepítése
+        wget https://services.gradle.org/distributions/gradle-6.7.1-bin.zip
+        unzip -d /home/runner/gradle gradle-6.7.1-bin.zip
+        echo "/home/runner/gradle/gradle-6.7.1/bin" >> $GITHUB_PATH
+        
+    - name: Build with Gradle 6.7
+      run: |
+        gradle --version
         gradle build --no-daemon
