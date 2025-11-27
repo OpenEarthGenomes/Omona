@@ -1,21 +1,26 @@
 name: Build Kotlin Project
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Gradle
-        run: |
-          mkdir -p gradle/wrapper
-          wget -q -O gradle/wrapper/gradle-wrapper.jar \
-            https://github.com/gradle/gradle/raw/master/gradle/wrapper/gradle-wrapper.jar
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew 2>/dev/null || echo "No gradlew, using direct gradle"
-          ./gradlew build || gradle build
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Gradle
+      run: |
+        # Gradle wrapper automatikus létrehozása
+        gradle wrapper --gradle-version 7.5
+        
+    - name: Build with Gradle
+      run: ./gradlew build
