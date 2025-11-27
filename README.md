@@ -41,17 +41,6 @@ Szeretnél hozzájárulni a projekthez?
 · Nyiss egy Issue-t a javaslataiddal
 · Vagy küldj Pull Request-et
 
-Magambrowser/
-└── app/
-    └── src/main/
-        ├── 📄 AndroidManifest.xml
-        ├── 📁 java/com/magambrowser/
-        │   └── 📄 MainActivity.kt
-        └── 📁 res/
-            ├── 📁 layout/
-            │   └── 📄 activity_main.xml
-            └── 📁 drawable/
-                └── 📄 rounded_edittext.xml
 ---
 
 License: MIT License
