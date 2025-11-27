@@ -1,11 +1,15 @@
 package com.magambrowser
 
+import android.app.DownloadManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,6 +19,8 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowManager
+import android.content.Context
+import java.net.URLEncoder
 
 class MainActivity : AppCompatActivity() {
     
@@ -24,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var backButton: ImageButton
     private lateinit var refreshButton: ImageButton
     private lateinit var securityButton: ImageButton
+    private lateinit var jsToggleButton: ImageButton
 
     // ADBLOCK LISTA
     private val blockedDomains = listOf(
@@ -50,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private var currentSearchEngine = "DuckDuckGo"
     private var currentSecurityLevel = "🔒 BIZTONSÁGOS"
     private var isUrlEditTextProgrammaticChange = false
+    private var isJavaScriptEnabled = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         backButton = findViewById(R.id.backButton)
         refreshButton = findViewById(R.id.refreshButton)
         securityButton = findViewById(R.id.securityButton)
+        jsToggleButton = findViewById(R.id.jsToggleButton)
 
         // ✅ COPY-PASTE JAVÍTÁSOK BEÁLLÍTÁSA
         setupUrlEditText()
@@ -130,6 +139,14 @@ class MainActivity : AppCompatActivity() {
                     isUrlEditTextProgrammaticChange = false
                 }
             }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                // ✅ LAKAT IKON FRISSÍTÉS OLDAL BETÖLTÉS UTÁN
+                if (url != null) {
+                    updateSecurityIndicator(url)
+                }
+            }
         }
 
         // GOMB ESEMÉNYEK
@@ -148,6 +165,11 @@ class MainActivity : AppCompatActivity() {
 
         securityButton.setOnClickListener {
             showSecurityInfo()
+        }
+
+        // ✅ JAVASCRIPT KAPCSOLÓ GOMB
+        jsToggleButton.setOnClickListener {
+            toggleJavaScript()
         }
 
         goButton.setOnLongClickListener {
@@ -282,18 +304,48 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // BIZTONSÁGI INDIKÁTOR
+    // ✅ BIZTONSÁGI INDIKÁTOR - PIROS/ZÖLD LAKAT
     private fun updateSecurityIndicator(url: String) {
-        currentSecurityLevel = when {
-            url.startsWith("https://") -> "🔒 BIZTONSÁGOS"
-            url.startsWith("http://") -> "⚠️ NEM BIZTONSÁGOS"
-            else -> "❌ BLOKKOLVA"
+        when {
+            url.startsWith("https://") -> {
+                // ✅ ZÖLD LAKAT - biztonságos
+                securityButton.setImageResource(android.R.drawable.presence_online)
+                currentSecurityLevel = "🔒 BIZTONSÁGOS"
+            }
+            url.startsWith("http://") -> {
+                // ✅ PIROS LAKAT - nem biztonságos  
+                securityButton.setImageResource(android.R.drawable.presence_busy)
+                currentSecurityLevel = "⚠️ NEM BIZTONSÁGOS"
+            }
+            else -> {
+                // ✅ SZÜRKE/X - blokkolva
+                securityButton.setImageResource(android.R.drawable.presence_offline)
+                currentSecurityLevel = "❌ BLOKKOLVA"
+            }
         }
         securityButton.contentDescription = currentSecurityLevel
     }
 
     private fun showSecurityInfo() {
         Toast.makeText(this, currentSecurityLevel, Toast.LENGTH_LONG).show()
+    }
+
+    // ✅ JAVASCRIPT KAPCSOLÓ
+    private fun toggleJavaScript() {
+        isJavaScriptEnabled = !isJavaScriptEnabled
+        webView.settings.javaScriptEnabled = isJavaScriptEnabled
+        
+        // Ikon frissítése
+        if (isJavaScriptEnabled) {
+            jsToggleButton.setImageResource(android.R.drawable.ic_lock_lock)
+            Toast.makeText(this, "✅ JavaScript engedélyezve", Toast.LENGTH_SHORT).show()
+        } else {
+            jsToggleButton.setImageResource(android.R.drawable.ic_lock_open)
+            Toast.makeText(this, "❌ JavaScript letiltva", Toast.LENGTH_SHORT).show()
+        }
+        
+        // Oldal újratöltése a beállítás alkalmazásához
+        webView.reload()
     }
 
     // ADBLOCK
@@ -310,20 +362,28 @@ class MainActivity : AppCompatActivity() {
         return downloadIndicators.any { indicator -> url.contains(indicator, ignoreCase = true) }
     }
 
-    // ✅ LETÖLTÉS KEZELÉS - JAVÍTOTT (.toLowerCase())
+    // ✅ LETÖLTÉS KEZELÉS - TELJESEN ÚJ VERZIÓ
     private fun handleDownload(url: String) {
-        val fileExtension = url.substringAfterLast('.', "").toLowerCase() // ✅ JAVÍTVA
-        
-        when {
-            fileExtension == "apk" -> {
-                Toast.makeText(this, "APK letöltés - csak megbízható forrásból!", Toast.LENGTH_LONG).show()
-            }
-            safeFileTypes.contains(fileExtension) -> {
-                Toast.makeText(this, "Biztonságos letöltés: $fileExtension", Toast.LENGTH_SHORT).show()
-            }
-            else -> {
-                Toast.makeText(this, "Letöltés blokkolva: $fileExtension", Toast.LENGTH_LONG).show()
-            }
+        try {
+            val request = DownloadManager.Request(Uri.parse(url))
+                .setTitle("Letöltés: ${URLUtil.guessFileName(url, null, null)}")
+                .setDescription("Fájl letöltése folyamatban...")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+
+            // Fájl mentése a Letöltések mappába
+            val fileName = URLUtil.guessFileName(url, null, null)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+
+            // Letöltés indítása
+            val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+            
+            Toast.makeText(this, "Letöltés elindult: $fileName", Toast.LENGTH_LONG).show()
+            
+        } catch (e: Exception) {
+            Toast.makeText(this, "Letöltési hiba: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
