@@ -2,6 +2,16 @@
 Web browser App for android 
 Magambrowser
 
+SafeFile download:
+
+private val safeFileTypes = listOf(
+    "pdf", "txt", "doc", "docx", "xls", "xlsx", 
+    "jpg", "jpeg", "png", "gif", "bmp", "webp",
+    "mp3", "wav", "ogg", "mp4", "avi", "mkv", "apk"
+)
+
+
+
 Androidra készült webböngésző alkalmazás Kotlin nyelven.
 
 📁 Projekt Struktúra
