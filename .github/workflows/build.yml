@@ -18,10 +18,13 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
         
-    - name: Create Gradle Wrapper
+    - name: Create Compatible Gradle Wrapper
       run: |
-        # Gradle wrapper létrehozása
-        gradle wrapper --gradle-version 7.5
+        # Gradle 7.5 wrapper létrehozása (Java 11 kompatibilis)
+        gradle wrapper --gradle-version 7.5 --distribution-type all
         
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
     - name: Build with Gradle
       run: ./gradlew build --no-daemon
