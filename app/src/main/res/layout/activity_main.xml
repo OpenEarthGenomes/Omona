@@ -28,6 +28,15 @@
             android:contentDescription="Frissítés"
             android:layout_marginStart="4dp"/>
 
+        <!-- ✅ JAVASCRIPT KAPCSOLÓ GOMB -->
+        <ImageButton
+            android:id="@+id/jsToggleButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@android:drawable/ic_lock_lock"
+            android:contentDescription="JavaScript kapcsoló"
+            android:layout_marginStart="4dp"/>
+
         <EditText
             android:id="@+id/urlEditText"
             android:layout_width="0dp"
@@ -43,11 +52,12 @@
             android:textSize="14sp"
             android:maxLines="1"/>
 
+        <!-- ✅ LAKAT GOMB (most már ikon változik) -->
         <ImageButton
             android:id="@+id/securityButton"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@android:drawable/ic_lock_lock"
+            android:src="@android:drawable/presence_online"
             android:contentDescription="Biztonsági info"
             android:layout_marginEnd="4dp"/>
 
