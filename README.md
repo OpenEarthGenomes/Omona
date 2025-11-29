@@ -65,3 +65,45 @@ Magambrowser/
 └── 📁 .github/workflows/
     └── 📜 build.yml                (MÁR VAN)
 License: MIT License
+
+
+
+MyWebLight/
+├── 📄 build.gradle                          # 🔥 Project szintű build file
+├── 📄 settings.gradle
+├── 📄 gradle.properties
+└── 📁 app/                                  # 🔥 Main application module
+    ├── 📄 build.gradle                      # 🔥 MODUL BUILD: API 22 beállítások
+    ├── 📄 proguard-rules.pro
+    └── 📁 src/
+        └── 📁 main/                         # 🔥 Fő forráskódok
+            ├── 📄 AndroidManifest.xml       # 🔥 /app/src/main/AndroidManifest.xml
+            ├── 📁 java/
+            │   └── 📁 com/
+            │       └── 📁 magambrowser/
+            │           └── 📄 MainActivity.kt  # 🔥 /app/src/main/java/com/magambrowser/MainActivity.kt
+            └── 📁 res/                      # 🔥 Resource fájlok
+                ├── 📁 drawable/
+                │   └── 📄 rounded_edittext.xml  # 🔥 /app/src/main/res/drawable/rounded_edittext.xml
+                ├── 📁 layout/
+                │   └── 📄 activity_main.xml     # 🔥 /app/src/main/res/layout/activity_main.xml
+                ├── 📁 mipmap-hdpi/
+                │   ├── 📄 ic_launcher.png
+                │   └── 📄 ic_launcher_round.png
+                ├── 📁 mipmap-mdpi/
+                │   ├── 📄 ic_launcher.png
+                │   └── 📄 ic_launcher_round.png
+                ├── 📁 mipmap-xhdpi/
+                │   ├── 📄 ic_launcher.png
+                │   └── 📄 ic_launcher_round.png
+                ├── 📁 mipmap-xxhdpi/
+                │   ├── 📄 ic_launcher.png
+                │   └── 📄 ic_launcher_round.png
+                ├── 📁 mipmap-xxxhdpi/
+                │   ├── 📄 ic_launcher.png
+                │   └── 📄 ic_launcher_round.png
+                └── 📁 values/
+                    ├── 📄 colors.xml
+                    ├── 📄 strings.xml
+                    ├── 📄 styles.xml
+                    └── 📄 themes.xml
